@@ -52,7 +52,12 @@ python main.py --phase train
 ```bash
 python main.py --phase test
 ```
+## Table
 
+| GPU       | number        | Time  |
+|-----------|:-------------:|----:  |
+|k40        | 2             | 2h    |
+|t100       |4              | 1h    | 
 ## Results
 Here is the results generated from this implementation:
 
