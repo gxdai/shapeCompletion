@@ -1,2 +1,13 @@
 # Compiled source #
 *.pyc
+
+
+# ignore directories
+checkpoint/
+gitSetup.txt
+label_to_facades.png
+logs/
+modelnet10/
+requirements.txt
+sample/
+test/
