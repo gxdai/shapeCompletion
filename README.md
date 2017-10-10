@@ -54,7 +54,7 @@ python main.py --phase test
 ## Table
 
  GPU       | number        | Time  |
----|:------:|----:  |---
+---|:------:|----:  
 k40        | 2             | 2h    |
 t100       |4              | 1h    | 
 ## Dataset Info 
