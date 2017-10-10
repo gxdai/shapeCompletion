@@ -59,7 +59,7 @@ python main.py --phase test
 |t100       |4              | 1h    | 
 ## Dataset Info 
 
-| ID  | Name   | Num(orig)  | | Num (downloaed) |
+| ID  | Name   | Num(orig)  |  Num (downloaed) |
 |-----------|:-------------:|----:  |
 |k40        | 2             | 2h    |
 |t100       |4              | 1h    | 
