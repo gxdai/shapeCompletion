@@ -59,10 +59,16 @@ k40        | 2             | 2h    |
 t100       |4              | 1h    | 
 ## Dataset Info 
 
-| ID  | Name   | Num(orig)  |  Num (downloaded) |
-|-----------|:-------------:|----:  |---|
-|k40        | 2             | 2h    |-|
-|t100       |4              | 1h    |-- |
+| ID        | Name          | Num(orig) |  Num (downloaded) |
+|-----------|:-------------:|----:      |---                |
+|02691156   | airplane      |     4045  | 4045              |
+|04379243   | table         | 8843      |   6000            |
+|02958343   | car           | 7497      | 5949              |
+|03001627   | chair         | 6778      | 6000              |
+|04256520   | sofa          |  3173     | 3173              |
+|02933112   | cabinet       | 1572      | 1572              |
+|03636649   | lamp          | 2318      | 2318              |
+|04530566   | watercraft    | 1939      | 1939              |
 ## Results
 Here is the results generated from this implementation:
 
