@@ -11,3 +11,4 @@ modelnet10/
 requirements.txt
 sample/
 test/
+completion_train.txt
