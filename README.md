@@ -57,6 +57,12 @@ python main.py --phase test
 |-----------|:-------------:|----:  |
 |k40        | 2             | 2h    |
 |t100       |4              | 1h    | 
+## Dataset Info 
+
+| ID  | Name   | Num(orig)  | | Num (downloaed) |
+|-----------|:-------------:|----:  |
+|k40        | 2             | 2h    |
+|t100       |4              | 1h    | 
 ## Results
 Here is the results generated from this implementation:
 
