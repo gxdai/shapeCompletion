@@ -53,16 +53,16 @@ python main.py --phase test
 ```
 ## Table
 
-| GPU       | number        | Time  |
-|-----------|:-------------:|----:  |
-|k40        | 2             | 2h    |
-|t100       |4              | 1h    | 
+ GPU       | number        | Time  |
+---|:------:|----:  |---
+k40        | 2             | 2h    |
+t100       |4              | 1h    | 
 ## Dataset Info 
 
-| ID  | Name   | Num(orig)  |  Num (downloaed) |
-|-----------|:-------------:|----:  ||
-|k40        | 2             | 2h    ||
-|t100       |4              | 1h    | |
+| ID  | Name   | Num(orig)  |  Num (downloaded) |
+|-----------|:-------------:|----:  |---|
+|k40        | 2             | 2h    |-|
+|t100       |4              | 1h    |-- |
 ## Results
 Here is the results generated from this implementation:
 
