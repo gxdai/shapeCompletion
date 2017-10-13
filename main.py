@@ -18,7 +18,7 @@ parser.add_argument('--train_size', dest='train_size', type=int, default=1e8, he
 parser.add_argument('--load_size', dest='load_size', type=int, default=286, help='scale images to this size')
 parser.add_argument('--fine_size', dest='fine_size', type=int, default=64, help='then crop to this size')
 parser.add_argument('--output_size', dest='output_size', type=int, default=64, help='then crop to this size')
-parser.add_argument('--shape_size', dest='shape_size', type=int, default=64, help='then crop to this size')
+parser.add_argument('--shape_size', dest='shape_size', type=int, default=32, help='then crop to this size')
 parser.add_argument('--ngf', dest='ngf', type=int, default=64, help='# of gen filters in first conv layer')
 parser.add_argument('--ndf', dest='ndf', type=int, default=64, help='# of discri filters in first conv layer')
 parser.add_argument('--input_nc', dest='input_nc', type=int, default=1, help='# of input image channels')
@@ -41,8 +41,10 @@ parser.add_argument('--test_dir', dest='test_dir', default='./test', help='test 
 parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=100.0, help='weight on L1 term in objective')
 parser.add_argument('--num_gpus', dest='num_gpus', type=int, default=3, help='# of gpus')
 
-parser.add_argument('--train_list', dest='train_list', default='./modelnet10/script/train.txt', help='name of the dataset')
-parser.add_argument('--test_list', dest='test_list', default='./modelnet10/script/test.txt', help='name of the dataset')
+parser.add_argument('--train_listFile', dest='train_listFile', default='./data/h5_shapenet_dim32_sdf/train_file_label.txt', help='training list file')
+parser.add_argument('--test_listFile', dest='test_listFile', default='./data/h5_shapenet_dim32_sdf/test_file_label.txt', help='testing list file')
+parser.add_argument('--fileRootDir', dest='fileRootDir', default='/home/gxdai/MMVC_LARGE/Guoxian_Dai/data/shapeCompletion/txt', help='testing list file')
+parser.add_argument('--truncation', type=float, default=3, help='The truncation threshold of input voxel')
 
 args = parser.parse_args()
 
@@ -62,7 +64,8 @@ def main(_):
                         output_size=args.output_size, dataset_name=args.dataset_name,
                         checkpoint_dir=args.checkpoint_dir, sample_dir=args.sample_dir, 
                         input_c_dim=args.input_nc, output_c_dim=args.output_nc,
-                        train_list=args.train_list, test_list=args.test_list, logdir=args.logdir)
+                        train_listFile=args.train_listFile, test_listFile=args.test_listFile, logdir=args.logdir,
+                        truncation=args.truncation,fileRootDir=args.fileRootDir)
                         #imageRootDir=args.imageRootDir)
 
         if args.phase == 'train':
