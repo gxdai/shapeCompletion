@@ -69,7 +69,6 @@ class shapeCompletion(Dataset):
         self.g_bn_d7 = batch_norm(name='g_bn_d7')
         """
         self.build_model(withLocalLoss=False)
-        #self.build_model_wgan_gp(withLocalLoss=True)
  
  
     def generator(self, shape, y=None):
@@ -237,13 +236,10 @@ class shapeCompletion(Dataset):
 
     def train(self, args):
         """Train shape Completion"""
-        print("STEP00")
         d_optim = tf.train.AdamOptimizer(args.lr, beta1=args.beta1) \
                           .minimize(self.d_loss, var_list=self.d_vars)
-        print("STEP01")
         g_optim = tf.train.AdamOptimizer(args.lr, beta1=args.beta1) \
                           .minimize(self.g_loss, var_list=self.g_vars)
-        print("STEP02")
         init_op = tf.global_variables_initializer()
         self.sess.run(init_op)
 
@@ -292,21 +288,21 @@ class shapeCompletion(Dataset):
                     % (epoch, idx, self.train_size,
                         time.time() - start_time, errD, errG))
 
-                if np.mod(counter, 10) == 1:
+                if np.mod(counter, 20) == 1:
                     self.sample_shapes(args.sample_dir, epoch, idx)
                     #self.sample_triplet(args.sample_dir, epoch, idx)
 
-                if np.mod(counter, 10) == 2:
+                if np.mod(counter, 50) == 2:
                     self.save(args.checkpoint_dir, counter)
   
 
     def sample_shapes(self, sample_dir, epoch, idx):
-        sample_images, _ = self.next_batch(self.batch_size, 'random')
+        sample_shapes, mask = self.next_batch(self.batch_size, 'random')
         samples, d_loss, g_loss = self.sess.run(
             [self.fake_shape, self.d_loss, self.g_loss],
-            feed_dict={self.shape_pair: sample_images}
+            feed_dict={self.partial_shape: sample_shapes[:,:,:,:,:1], self.target_shape:sample_shapes[:,:,:,:,1:], self.mask: mask}
         )
-        save_shapes(samples, './{}/train_{:02d}_{:04d}_'.format(sample_dir, epoch, idx))
+        save_shapes_asTxt(samples, './{}/train_{:02d}_{:04d}_'.format(sample_dir, epoch, idx))
         print("[Sample] d_loss: {:.8f}, g_loss: {:.8f}".format(d_loss, g_loss))
     
     def test(self, args):

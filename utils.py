@@ -7,6 +7,7 @@ import json
 import random
 import pprint
 import scipy.misc
+import scipy.io
 import numpy as np
 from time import gmtime, strftime
 
@@ -116,3 +117,7 @@ def save_noisy_shapes(shapes, shape_path):
         mdict['voxels'] = shapes[i]
         scipy.io.savemat(shape_path+'{:_<2d}.mat'.format(i), mdict) 
         #scipy.io.savemat(shape_path+'{:2d}.mat'.format(i), shapes[i]) 
+def save_shapes_asTxt(shapes, shape_path):
+    num_shapes = shapes.shape[0]
+    for i in range(num_shapes):
+        np.savetxt(shape_path+'{:_<2d}.mat'.format(i), shapes[i].flatten(), fmt='%2.5f')
