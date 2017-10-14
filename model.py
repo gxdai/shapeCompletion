@@ -16,7 +16,7 @@ class shapeCompletion(Dataset):
                  batch_size=12, output_size=64, gf_dim=16, df_dim=16, L1_lambda=100,
                  input_c_dim=1, output_c_dim=1, dataset_name='modelnet10',
                  checkpoint_dir=None, sample_dir=None, train_list=None, test_list=None, logdir=None, train_listFile=None, test_listFile=None,
-                 fileRootDir=None, truncation=3):
+                 fileRootDir=None, test_benchmark=None, benchmark_output_dir=None, truncation=3):
     
         # For dataset class
         self.sess = sess
@@ -28,12 +28,13 @@ class shapeCompletion(Dataset):
         self.checkpoint_dir = checkpoint_dir
         self.dataset_name = dataset_name
         self.logdir = logdir
+        self.benchmark_output_dir = benchmark_output_dir
 
         self.train_list = train_list
         self.test_list = test_list
         self.voxel_size = shape_size
-        Dataset.__init__(self, train_listFile=train_listFile, test_listFile=test_listFile, fileRootDir=fileRootDir,\
-                    voxel_size=shape_size, truncation=truncation)
+        Dataset.__init__(self, train_listFile=train_listFile, test_listFile=test_listFile, test_benchmark=test_benchmark, 
+                    voxel_size=shape_size, truncation=truncation, fileRootDir=fileRootDir)
 
         self.gf_dim = gf_dim
         self.df_dim = df_dim
@@ -329,7 +330,34 @@ class shapeCompletion(Dataset):
             save_shapes(samples, './{}/test_{:04d}_'.format(args.test_dir, idx))
             print('./{}/test_{:04d}_'.format(args.test_dir, idx))
             save_noisy_shapes(sample_shapes[:,:,:,:,:1], './{}/org_{:04d}_'.format(args.test_dir, idx))
+    def evaluation(self, args):
+        """Test pix2pix"""
+        init_op = tf.global_variables_initializer()
+        self.sess.run(init_op)
+   
 
+        start_time = time.time()
+        if self.load(self.checkpoint_dir):
+            print(" [*] Load SUCCESS")
+        else:
+            print(" [!] Load failed...")
+
+        #for i, sample_image in enumerate(sample_images):
+        
+        for i in range(int(self.benchmark_size / self.batch_size)):
+            print("This is {:2d}-th batch".format(i))
+            sample_shapes, mask = self.next_batch(self.batch_size, 'evaluation')
+            fake_shapes, d_loss, g_loss = self.sess.run(
+                [self.fake_shape, self.d_loss, self.g_loss],
+                feed_dict={self.partial_shape: sample_shapes[:,:,:,:,:1], self.target_shape:sample_shapes[:,:,:,:,1:], self.mask: mask}
+            )
+            for j in range(self.batch_size):
+                fileSplit = self.benchmark_list[i*self.batch_size+j].split('/')
+                subDir = os.path.join(self.benchmark_output_dir, fileSplit[-3], fileSplit[-2])
+                if not os.path.isdir(subDir):
+                    os.makedirs(subDir)
+                outputFile = os.path.join(subDir, fileSplit[-1])
+                np.savetxt(outputFile, fake_shapes[j].flatten(), fmt='%2.5f')
     
     def load(self, checkpoint_dir):
         print(" [*] Reading checkpoint...")

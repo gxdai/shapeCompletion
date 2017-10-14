@@ -42,6 +42,8 @@ parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=100.0, 
 parser.add_argument('--num_gpus', dest='num_gpus', type=int, default=3, help='# of gpus')
 
 parser.add_argument('--train_listFile', dest='train_listFile', default='./data/h5_shapenet_dim32_sdf/train_file_label.txt', help='training list file')
+parser.add_argument('--test_benchmark', dest='test_benchmark', default='./benchmark_test.txt', help='training list file')
+parser.add_argument('--benchmark_output_dir', dest='benchmark_output_dir', default='./benchmark_output', help='training list file')
 parser.add_argument('--test_listFile', dest='test_listFile', default='./data/h5_shapenet_dim32_sdf/test_file_label.txt', help='testing list file')
 parser.add_argument('--fileRootDir', dest='fileRootDir', default='/home/gxdai/MMVC_LARGE/Guoxian_Dai/data/shapeCompletion/txt', help='testing list file')
 parser.add_argument('--truncation', type=float, default=3, help='The truncation threshold of input voxel')
@@ -65,14 +67,16 @@ def main(_):
                         checkpoint_dir=args.checkpoint_dir, sample_dir=args.sample_dir, 
                         input_c_dim=args.input_nc, output_c_dim=args.output_nc,
                         train_listFile=args.train_listFile, test_listFile=args.test_listFile, logdir=args.logdir,
-                        truncation=args.truncation,fileRootDir=args.fileRootDir)
+                        truncation=args.truncation,fileRootDir=args.fileRootDir, test_benchmark=args.test_benchmark, benchmark_output_dir=args.benchmark_output_dir)
                         #imageRootDir=args.imageRootDir)
 
         if args.phase == 'train':
             model.train(args)
             #model.train_multiple_gpu(args)
-        else:
+        elif args.phase == 'test':
             model.test(args)
+        elif args.phase == 'evaluation':
+            model.evaluation(args)
 
 
 """

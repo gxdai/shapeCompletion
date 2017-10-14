@@ -33,20 +33,19 @@ class Dataset:
         # Get the path list of testing data
         self.test_data, self.test_target = getFullPath(fileRootDir, self.test_list) 
         # Get the path list of benchmark data
-        self.benchmark_list = [os.path.join(fileRootDir, f+'__0__.sdf') for f in self.benchmark_list]
-        print(self.benchmark_list[:5])
-        sys.exit()
+        self.benchmark_list = [os.path.join(fileRootDir, 'shapenet_dim32_sdf', f.rstrip('\n')+'__0__.sdf') for f in self.benchmark_list]
 
         
         # Init params
         self.train_ptr = 0
         self.test_ptr = 0
+        self.benchmark_ptr = 0
         self.train_size = len(self.train_list)
         self.test_size = len(self.test_list)
+        self.benchmark_size = len(self.benchmark_list)
 	self.voxel_size = voxel_size
         self.truncation = truncation
 
-        # Debug
 
     def next_batch(self, batch_size, phase):
         # Get next batch of image (path) and labels
@@ -93,6 +92,18 @@ class Dataset:
             for i in range(batch_size):
                 paths.append(self.test_data[random_index[i]])
                 labels.append(self.test_target[random_index[i]])
+        
+        elif phase == 'evaluation':
+            if self.benchmark_ptr + batch_size < self.benchmark_size:
+                paths = self.benchmark_list[self.benchmark_ptr: self.benchmark_ptr+batch_size]
+                labels = self.benchmark_list[self.benchmark_ptr: self.benchmark_ptr+batch_size]
+                self.benchmark_ptr += batch_size
+            else:
+                new_ptr = (self.benchmark_ptr+batch_size) % self.benchmark_size
+                paths = self.benchmark_list[self.benchmark_ptr:] + self.benchmark_list[:new_ptr]
+                labels = self.benchmark_list[self.benchmark_ptr:] + self.benchmark_list[:new_ptr]
+                self.benchmark_ptr = new_ptr
+                # shuffle order at the beginning of every new epoch of trainning
         else:
             return None, None
         # put parital shape and complete shape in the same numpy array
