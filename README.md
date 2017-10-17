@@ -82,17 +82,17 @@ t100       |4              | 1h    |
 |03636649   | lamp          | 2318      | 2318              |
 |04530566   | watercraft    | 1939      | 1939              |
 ## Results
-method                          | scans, 32 | scans, 128 | images, 32 | images, 128
-:---:                           | :---:     |:---:       |: ---      :| :---:
-3D-gan + L1 loss(w dp)          | 0.696     | -          | 0.757      | -      
-3D-gan + L1 loss(w/o dp)        | 0.696     | -          |  -         | -
-epn-unet-class + synth          | 0.309     | 1.80       | 0.374      | 1.89
-epn-unet + synth                | 0.310     | 1.82       | 0.379      | 1.91
-epn-class + synth               | 0.371     | 1.92       | 0.483      | 2.16
-epn + synth                     | 0.382     | 1.94       | 0.512      | 2.33
-3d shapenet                     | -         | -          | 0.905      | 3.70
-shapeRecon                      | -         | -          | 0.970      | 4.63
-Possion Surface                 | -         | -          | 1.91       | 8.46
+method                          | scans, 32 | scans, 128 | images, 32 | images, 128|
+:---:                           | :---:     |:---:       |: ---      :| :---:|
+3D-gan + L1 loss(w dp)          | 0.696     | -          | 0.757      | -    |  
+3D-gan + L1 loss(w/o dp)        | 0.696     | -          |  -         | -    |
+epn-unet-class + synth          | 0.309     | 1.80       | 0.374      | 1.89 |
+epn-unet + synth                | 0.310     | 1.82       | 0.379      | 1.91 |
+epn-class + synth               | 0.371     | 1.92       | 0.483      | 2.16 |
+epn + synth                     | 0.382     | 1.94       | 0.512      | 2.33 |
+3d shapenet                     | -         | -          | 0.905      | 3.70 |
+shapeRecon                      | -         | -          | 0.970      | 4.63 | 
+Possion Surface                 | -         | -          | 1.91       | 8.46 |
 
 
 
