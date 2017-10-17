@@ -43,11 +43,15 @@ parser.add_argument('--num_gpus', dest='num_gpus', type=int, default=3, help='# 
 
 parser.add_argument('--train_listFile', dest='train_listFile', default='./data/h5_shapenet_dim32_sdf/train_file_label.txt', help='training list file')
 parser.add_argument('--test_benchmark', dest='test_benchmark', default='./benchmark_test.txt', help='training list file')
-parser.add_argument('--benchmark_output_dir', dest='benchmark_output_dir', default='./benchmark_output', help='training list file')
+parser.add_argument('--benchmark_output_dir', dest='benchmark_output_dir', default='./evaluation', help='training list file')
 parser.add_argument('--test_listFile', dest='test_listFile', default='./data/h5_shapenet_dim32_sdf/test_file_label.txt', help='testing list file')
 parser.add_argument('--fileRootDir', dest='fileRootDir', default='/home/gxdai/MMVC_LARGE/Guoxian_Dai/data/shapeCompletion/txt', help='testing list file')
+parser.add_argument('--testInputType', dest='testInputType', default='shapenet_dim32_sdf', help='testing list file')
 parser.add_argument('--truncation', type=float, default=3, help='The truncation threshold of input voxel')
 
+
+# The dropoutCondtion for generator (with dropout or without dropout)
+parser.add_argument('--dropoutCondition', type=int, default=1, help='Whether to use dropout in generator')
 args = parser.parse_args()
 
 print("args.imageRootDir = {:10}".format(args.imageRootDir))
@@ -67,7 +71,9 @@ def main(_):
                         checkpoint_dir=args.checkpoint_dir, sample_dir=args.sample_dir, 
                         input_c_dim=args.input_nc, output_c_dim=args.output_nc,
                         train_listFile=args.train_listFile, test_listFile=args.test_listFile, logdir=args.logdir,
-                        truncation=args.truncation,fileRootDir=args.fileRootDir, test_benchmark=args.test_benchmark, benchmark_output_dir=args.benchmark_output_dir)
+                        truncation=args.truncation,fileRootDir=args.fileRootDir, test_benchmark=args.test_benchmark, 
+                        benchmark_output_dir=args.benchmark_output_dir, testInputType=args.testInputType,
+                        dropoutCondition=args.dropoutCondition)
                         #imageRootDir=args.imageRootDir)
 
         if args.phase == 'train':
@@ -77,31 +83,6 @@ def main(_):
             model.test(args)
         elif args.phase == 'evaluation':
             model.evaluation(args)
-
-
-"""
-def main(_):
-    model = shapeCompletion()
-    shape = tf.placeholder(tf.float32, shape=[12, 32, 32, 32, 1], name='input')
-    out = model.generator(shape)
-    prob = model.discriminator(out)
-    var_list = tf.trainable_variables()
-    for var in var_list:
-        print(var.name)
-
-    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
-            sess.run(tf.global_variables_initializer())
-            for _ in range(10):
-                prob_, out_ = sess.run([prob, out], feed_dict={shape: np.random.random((12, 32, 32, 32, 1))})
-                print(out_.shape)
-                print(prob_[0].shape)
-
-
-"""
-
-
-
-
 
 
 if __name__ == '__main__':

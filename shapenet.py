@@ -4,7 +4,7 @@ from random import shuffle
 import argparse
 import sys
 class Dataset:
-    def __init__(self, train_listFile, test_listFile, test_benchmark=None, voxel_size=32, truncation=3, fileRootDir=None):
+    def __init__(self, train_listFile, test_listFile, test_benchmark=None, voxel_size=32, truncation=3, fileRootDir=None, testInputType='shapenet_dim32_sdf'):
         # The format of input list is as follows:
         #
         #   *.sdf   *df     label
@@ -33,7 +33,7 @@ class Dataset:
         # Get the path list of testing data
         self.test_data, self.test_target = getFullPath(fileRootDir, self.test_list) 
         # Get the path list of benchmark data
-        self.benchmark_list = [os.path.join(fileRootDir, 'shapenet_dim32_sdf', f.rstrip('\n')+'__0__.sdf') for f in self.benchmark_list]
+        self.benchmark_list = [os.path.join(fileRootDir, testInputType, f.rstrip('\n')+'__0__.sdf') for f in self.benchmark_list]
 
         
         # Init params

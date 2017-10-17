@@ -16,7 +16,7 @@ class shapeCompletion(Dataset):
                  batch_size=12, output_size=64, gf_dim=16, df_dim=16, L1_lambda=100,
                  input_c_dim=1, output_c_dim=1, dataset_name='modelnet10',
                  checkpoint_dir=None, sample_dir=None, train_list=None, test_list=None, logdir=None, train_listFile=None, test_listFile=None,
-                 fileRootDir=None, test_benchmark=None, benchmark_output_dir=None, truncation=3):
+                 fileRootDir=None, test_benchmark=None, benchmark_output_dir=None, testInputType=None, dropoutCondition=None, truncation=3):
     
         # For dataset class
         self.sess = sess
@@ -34,7 +34,7 @@ class shapeCompletion(Dataset):
         self.test_list = test_list
         self.voxel_size = shape_size
         Dataset.__init__(self, train_listFile=train_listFile, test_listFile=test_listFile, test_benchmark=test_benchmark, 
-                    voxel_size=shape_size, truncation=truncation, fileRootDir=fileRootDir)
+                    voxel_size=shape_size, truncation=truncation, fileRootDir=fileRootDir, testInputType=testInputType)
 
         self.gf_dim = gf_dim
         self.df_dim = df_dim
@@ -43,6 +43,7 @@ class shapeCompletion(Dataset):
         self.input_c_dim = input_c_dim
 
         self.L1_lambda = L1_lambda
+        self.dropoutCondition = dropoutCondition
         # batch normalization : deals with poor initialization helps gradient flow
         self.d_bn1 = batch_norm(name='d_bn1')
         self.d_bn2 = batch_norm(name='d_bn2')
@@ -74,7 +75,6 @@ class shapeCompletion(Dataset):
  
     def generator(self, shape, y=None):
         with tf.variable_scope("generator") as scope:
-
             if self.shape_size == 32:
                 s = self.shape_size
                 s2, s4, s8 = int(s/2), int(s/4), int(s/8)
@@ -99,14 +99,20 @@ class shapeCompletion(Dataset):
                 # This is the decoder part
                 print([self.batch_size, s8, s8, s8, self.gf_dim*8])
                 self.d1, self.d1_w, self.d1_b = deconv3d(tf.nn.relu(e5), [self.batch_size, s8, s8, s8, self.gf_dim*8], d_w=1, d_h=1, d_l=1, name='g_d1', with_w=True)
-                d1 = tf.nn.dropout(self.g_bn_d1(self.d1), 0.5)
+                if self.dropoutCondition:
+                    d1 = tf.nn.dropout(self.g_bn_d1(self.d1), 0.5)
+                else:
+                    d1 = tf.nn.dropout(self.g_bn_d1(self.d1), 1.)
                 d1 = tf.concat([d1, e4], 4)
                 print(d1.get_shape())
                 #d1 is (4 x 4 x 4 x self.gf_dim*8*2)
 
                 self.d2, self.d2_w, self.d2_b = deconv3d(tf.nn.relu(d1),
                     [self.batch_size, s8, s8, s8, self.gf_dim*4], name='g_d2', d_w=1, d_h=1, d_l=1, with_w=True)
-                d2 = tf.nn.dropout(self.g_bn_d2(self.d2), 0.5)
+                if self.dropoutCondition:
+                    d2 = tf.nn.dropout(self.g_bn_d2(self.d2), 0.5)
+                else:
+                    d2 = tf.nn.dropout(self.g_bn_d2(self.d2), 1.)
                 d2 = tf.concat([d2, e3], 4)
                 print(d2.get_shape())
                 # d2 is (4 x 4 x self.gf_dim*4*2)
@@ -330,6 +336,7 @@ class shapeCompletion(Dataset):
             save_shapes(samples, './{}/test_{:04d}_'.format(args.test_dir, idx))
             print('./{}/test_{:04d}_'.format(args.test_dir, idx))
             save_noisy_shapes(sample_shapes[:,:,:,:,:1], './{}/org_{:04d}_'.format(args.test_dir, idx))
+    
     def evaluation(self, args):
         """Test pix2pix"""
         init_op = tf.global_variables_initializer()
@@ -351,12 +358,14 @@ class shapeCompletion(Dataset):
                 [self.fake_shape, self.d_loss, self.g_loss],
                 feed_dict={self.partial_shape: sample_shapes[:,:,:,:,:1], self.target_shape:sample_shapes[:,:,:,:,1:], self.mask: mask}
             )
+            print("[Sample] d_loss: {:.8f}, g_loss: {:.8f}".format(d_loss, g_loss))
             for j in range(self.batch_size):
                 fileSplit = self.benchmark_list[i*self.batch_size+j].split('/')
                 subDir = os.path.join(self.benchmark_output_dir, fileSplit[-3], fileSplit[-2])
                 if not os.path.isdir(subDir):
                     os.makedirs(subDir)
-                outputFile = os.path.join(subDir, fileSplit[-1])
+
+                outputFile = os.path.join(subDir, fileSplit[-1].split('.')[0] + '.df')  # change the extension of file name from *.sdf to *.df
                 np.savetxt(outputFile, fake_shapes[j].flatten(), fmt='%2.5f')
     
     def load(self, checkpoint_dir):
@@ -412,14 +421,20 @@ class shapeCompletion(Dataset):
                 # This is the decoder part
                 print([self.batch_size, s8, s8, s8, self.gf_dim*8])
                 self.d1, self.d1_w, self.d1_b = deconv3d(tf.nn.relu(e5), [self.batch_size, s8, s8, s8, self.gf_dim*8], d_w=1, d_h=1, d_l=1, name='g_d1', with_w=True)
-                d1 = tf.nn.dropout(self.g_bn_d1(self.d1), 0.5)
+                if self.dropoutCondition:
+                    d1 = tf.nn.dropout(self.g_bn_d1(self.d1), 0.5)
+                else:
+                    d1 = tf.nn.dropout(self.g_bn_d1(self.d1), 1.)
                 d1 = tf.concat([d1, e4], 4)
                 print(d1.get_shape())
                 #d1 is (4 x 4 x 4 x self.gf_dim*8*2)
 
                 self.d2, self.d2_w, self.d2_b = deconv3d(tf.nn.relu(d1),
                     [self.batch_size, s8, s8, s8, self.gf_dim*4], name='g_d2', d_w=1, d_h=1, d_l=1, with_w=True)
-                d2 = tf.nn.dropout(self.g_bn_d2(self.d2), 0.5)
+                if self.dropoutCondition:
+                    d2 = tf.nn.dropout(self.g_bn_d2(self.d2), 0.5)
+                else:
+                    d2 = tf.nn.dropout(self.g_bn_d2(self.d2), 1.0)
                 d2 = tf.concat([d2, e3], 4)
                 print(d2.get_shape())
                 # d2 is (4 x 4 x self.gf_dim*4*2)
