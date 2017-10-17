@@ -83,7 +83,7 @@ t100       |4              | 1h    |
 |04530566   | watercraft    | 1939      | 1939              |
 ## Results
 method                          | scans, 32 | scans, 128 | images, 32 | images, 128|
-:---:                           | :---:     |:---:       |: ---      :| :---:|
+:---:                           | :---:     |:---:       |:---:       | :---:|
 3D-gan + L1 loss(w dp)          | 0.696     | -          | 0.757      | -    |  
 3D-gan + L1 loss(w/o dp)        | 0.696     | -          |  -         | -    |
 epn-unet-class + synth          | 0.309     | 1.80       | 0.374      | 1.89 |
