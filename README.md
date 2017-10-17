@@ -96,15 +96,6 @@ Possion Surface                 | -         | -          | 1.91       | 8.46
 
 
 
-
-
-
-Here is the results generated from this implementation:
-
-- Facades:
-
-  <img src="./label_to_facades.png" width="700px"/>
-
 More results on other datasets coming soon!
 
 **Note**: To avoid the fast convergence of D (discriminator) network, G (generator) network is updated twice for each D network update, which differs from original paper but same as [DCGAN-tensorflow](https://github.com/carpedm20/DCGAN-tensorflow), which this project based on.
