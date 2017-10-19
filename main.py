@@ -8,9 +8,13 @@ from model import shapeCompletion
 #from model_ce import shapeCompletion            # The model is borrowed from context encoding
 import tensorflow as tf
 
+
+
+class_name = '02691156'
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--dataset_name', dest='dataset_name', default='facades', help='name of the dataset')
-parser.add_argument('--logdir', dest='logdir', default='./logs', help='name of the dataset')
+#parser.add_argument('--logdir', dest='logdir', default='./logs', help='name of the dataset')
+parser.add_argument('--logdir', dest='logdir', default='./logs/02691156', help='name of the dataset')
 parser.add_argument('--imageRootDir', dest='imageRootDir', default=None, help='name of the dataset')
 parser.add_argument('--epoch', dest='epoch', type=int, default=200, help='# of epoch')
 parser.add_argument('--batch_size', dest='batch_size', type=int, default=1, help='# images in batch')
@@ -35,13 +39,14 @@ parser.add_argument('--print_freq', dest='print_freq', type=int, default=50, hel
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--serial_batches', dest='serial_batches', type=bool, default=False, help='f 1, takes images in order to make batches, otherwise takes them randomly')
 parser.add_argument('--serial_batch_iter', dest='serial_batch_iter', type=bool, default=True, help='iter into serial image list')
-parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
+#parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
+parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint/02691156', help='models are saved here')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./sample', help='sample are saved here')
 parser.add_argument('--test_dir', dest='test_dir', default='./test', help='test sample are saved here')
 parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=100.0, help='weight on L1 term in objective')
 parser.add_argument('--num_gpus', dest='num_gpus', type=int, default=3, help='# of gpus')
-
-parser.add_argument('--train_listFile', dest='train_listFile', default='./data/h5_shapenet_dim32_sdf/train_file_label.txt', help='training list file')
+#parser.add_argument('--train_listFile', dest='train_listFile', default='./listFileDir/train_file_label.txt', help='training list file')
+parser.add_argument('--train_listFile', dest='train_listFile', default='./listFileDir/train_02691156.txt', help='training list file')
 parser.add_argument('--test_benchmark', dest='test_benchmark', default='./benchmark_test.txt', help='training list file')
 parser.add_argument('--benchmark_output_dir', dest='benchmark_output_dir', default='./evaluation', help='training list file')
 parser.add_argument('--test_listFile', dest='test_listFile', default='./data/h5_shapenet_dim32_sdf/test_file_label.txt', help='testing list file')
@@ -70,7 +75,8 @@ def main(_):
                         output_size=args.output_size, dataset_name=args.dataset_name,
                         checkpoint_dir=args.checkpoint_dir, sample_dir=args.sample_dir, 
                         input_c_dim=args.input_nc, output_c_dim=args.output_nc,
-                        train_listFile=args.train_listFile, test_listFile=args.test_listFile, logdir=args.logdir,
+                        train_listFile=args.train_listFile, test_listFile=args.test_listFile, 
+                        logdir=args.logdir,
                         truncation=args.truncation,fileRootDir=args.fileRootDir, test_benchmark=args.test_benchmark, 
                         benchmark_output_dir=args.benchmark_output_dir, testInputType=args.testInputType,
                         dropoutCondition=args.dropoutCondition)
